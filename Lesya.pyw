@@ -13,20 +13,25 @@ from pygame import mixer
 import webbrowser
 import wave
 
+# themes
 root = tk.ThemedTk()
 root.get_themes()
-root.set_theme("breeze")
+root.set_theme("breeze") # list of ttkthemes https://wiki.tcl-lang.org/page/List+of+ttk+Themes
 
+# greeting
 statusbar = ttk.Label(root, text="Welcome!", relief=SUNKEN, anchor=W, font='Times 10 italic')
 statusbar.pack(side=BOTTOM, fill=X)
 
+# menu
 menubar = Menu(root)
 root.config(menu=menubar)
 
 subMenu = Menu(menubar, tearoff=0)
 
+# music list
 playlist = []
 
+# browse songs
 def browse_file():
     global filename_path
     filename_path = filedialog.askopenfilename()
@@ -35,6 +40,7 @@ def browse_file():
     mixer.music.queue(filename_path)
 
 
+# add song
 def add_to_playlist(filename):
     filename = os.path.basename(filename)
     index = 0
@@ -43,31 +49,37 @@ def add_to_playlist(filename):
     index += 1
 
 
+# menu
 menubar.add_cascade(label="File", menu=subMenu)
 subMenu.add_command(label="Open", command=browse_file)
 subMenu.add_command(label="Exit", command=root.destroy)
 
 
+# information
 def about_us():
     tkinter.messagebox.showinfo('About Lesya', 'This is a Python music player.')
 
+# site with updates
 def updates():
     url = "https://vk.com/lesyapython"
     webbrowser.open_new(url)
 
-
+# menu
 subMenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=subMenu)
 subMenu.add_command(label="About Us", command=about_us)
 subMenu.add_command(label="Updates", command=updates)
 
+# music
 mixer.init()
 
+# information
 root.title("Lesya")
 root.iconbitmap(r'images/panties.ico')
 root.geometry('510x310')
 root.resizable(False, False)
 
+# buttons and frames
 leftframe = Frame(root)
 leftframe.pack(side=LEFT, padx=30, pady=30)
 
@@ -81,6 +93,7 @@ addBtn = ttk.Button(leftframe, text="+ Add", command=browse_file)
 addBtn.pack(side=LEFT)
 
 
+# delete song command
 def del_song():
     selected_song = playlistbox.curselection()
     selected_song = int(selected_song[0])
@@ -88,6 +101,7 @@ def del_song():
     playlist.pop(selected_song)
 
 
+# buttons and frames
 delBtn = ttk.Button(leftframe, text="- Del", command=del_song)
 delBtn.pack()
 
@@ -104,7 +118,7 @@ currenttimelabel = ttk.Label(topframe, text='Current Time : --:--')
 currenttimelabel.pack()
 
 
-def show_details(play_song):
+def show_details(play_song): # music total length
     file_data = os.path.splitext(play_song)
 
     if file_data[1] == '.mp3':
@@ -124,7 +138,7 @@ def show_details(play_song):
     t1.start()
 
 
-def start_count(t):
+def start_count(t): # music current time
     global paused
     current_time = 0
     while current_time <= t and mixer.music.get_busy():
@@ -160,7 +174,7 @@ def play_music():
             statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
             show_details(play_it)
         except:
-            tkinter.messagebox.showerror('File not found', 'Lesya could not find the file. Please check again.')
+            tkinter.messagebox.showerror('File not found', 'Lesya could not find the file. Please check again.') # ERROR
 
 def stop_music():
     mixer.music.stop()
@@ -183,6 +197,7 @@ def rewind_music():
     statusbar['text'] = "Music Rewinded"
 
 
+# volume
 def set_vol(val):
     volume = float(val) / 100
     mixer.music.set_volume(volume)
@@ -205,6 +220,7 @@ def mute_music():
         muted = TRUE
 
 
+# buttons and frames
 middleframe = Frame(rightframe)
 middleframe.pack(pady=30, padx=30)
 
@@ -234,6 +250,7 @@ mixer.music.set_volume(10)
 scale.grid(row=0, column=2, pady=15, padx=30)
 
 
+# exit
 def on_closing():
     stop_music()
     root.destroy()
